@@ -26,25 +26,26 @@ infra/     Azure Bicep templates
    ```bash
    docker compose -f docker-compose.dev.yml up --build
    ```
-3. In the backend container, run migrations:
-   ```bash
-   cd /workspace/backend
-   uv run alembic upgrade head
-   ```
-4. Start the backend API:
-   ```bash
-   cd /workspace/backend
-   uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-   ```
-5. The frontend dev server is available at `http://localhost:5173`.
+   The backend container automatically runs `uvicorn --reload` and the frontend
+   container runs `vite`, so both services start and hot-reload on file changes.
+   Database tables are created and demo data is seeded automatically on startup.
+3. Open the app at `http://localhost:5174` and sign in with the seeded admin
+   account (`admin@smartliftrentals.com` / `Admin123!`).
+
+To reset the development database to a clean, freshly seeded state:
+
+```bash
+cd /workspace/backend
+uv run python -m app.scripts.reset_db
+```
 
 ## Default Services
 
-- Backend API: `http://localhost:8000`
-- Frontend: `http://localhost:5173`
-- PostgreSQL/TimescaleDB: `localhost:5432`
-- MQTT broker: `localhost:1883`
-- Redis: `localhost:6379`
+- Frontend: `http://localhost:5174`
+- Backend API: `http://localhost:8001` (docs at `/docs`)
+- PostgreSQL/TimescaleDB: `localhost:5433`
+- MQTT broker: `localhost:1884`
+- Redis: `localhost:6380`
 
 ## Next Steps
 

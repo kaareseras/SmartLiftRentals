@@ -6,8 +6,16 @@ from sqlalchemy.orm import Session
 from app.config.database import get_db
 from app.schemas.lift import LiftCreate, LiftResponse, LiftUpdate
 from app.services.lift import create_lift, delete_lift, get_lift, get_lifts, update_lift
+from app.services.lift_type import get_lift_type
 
 router = APIRouter(prefix="/lifts", tags=["lifts"])
+
+
+def _validate_lift_type(db: Session, lift_type_id: int | None) -> None:
+    if lift_type_id is not None and get_lift_type(db, lift_type_id) is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Lift type not found"
+        )
 
 
 @router.get("", response_model=list[LiftResponse])
@@ -25,6 +33,7 @@ def read_lift(lift_id: int, db: Session = Depends(get_db)) -> LiftResponse:
 
 @router.post("", response_model=LiftResponse, status_code=status.HTTP_201_CREATED)
 def create_lift_endpoint(payload: LiftCreate, db: Session = Depends(get_db)) -> LiftResponse:
+    _validate_lift_type(db, payload.lift_type_id)
     return create_lift(db, payload)
 
 
@@ -34,6 +43,7 @@ def update_lift_endpoint(
     payload: LiftUpdate,
     db: Session = Depends(get_db),
 ) -> LiftResponse:
+    _validate_lift_type(db, payload.lift_type_id)
     lift = update_lift(db, lift_id, payload)
     if lift is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lift not found")

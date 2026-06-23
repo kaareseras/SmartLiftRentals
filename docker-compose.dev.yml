@@ -19,14 +19,14 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_SECRET: change-me-in-dev
-      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+      CORS_ORIGINS: http://localhost:5174,http://127.0.0.1:5174
     depends_on:
       - postgres
       - mosquitto
       - redis
     ports:
-      - "8000:8000"
-    command: sh -c "uv sync --all-groups && sleep infinity"
+      - "8001:8000"
+    command: sh -c "uv sync --all-groups && uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 || sleep infinity"
 
   postgres:
     image: timescale/timescaledb:latest-pg16
@@ -35,7 +35,7 @@ services:
       POSTGRES_USER: smartlift
       POSTGRES_PASSWORD: smartlift
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
@@ -47,7 +47,7 @@ services:
       MOSQUITTO_USERNAME: backend
       MOSQUITTO_PASSWORD: backend123
     ports:
-      - "1883:1883"
+      - "1884:1883"
     volumes:
       - ./broker/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - mosquitto-data:/mosquitto/data
@@ -56,7 +56,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "6380:6379"
 
   frontend-dev:
     image: node:20-alpine
@@ -65,10 +65,11 @@ services:
       - .:/workspace
     environment:
       VITE_API_BASE_URL: /api
+      VITE_API_PROXY_TARGET: http://backend-dev:8000
     depends_on:
       - backend-dev
     ports:
-      - "5173:5173"
+      - "5174:5173"
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
 
 volumes:

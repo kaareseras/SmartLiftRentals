@@ -33,6 +33,13 @@ class Settings:
     REDIS_PORT: int = int(os.getenv("REDIS_PORT", "6379"))
 
     JWT_SECRET: str = os.getenv("JWT_SECRET", "change-me-in-dev")
+    JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
+    JWT_EXPIRE_MINUTES: int = int(os.getenv("JWT_EXPIRE_MINUTES", str(60 * 24)))
+
+    SEED_ADMIN_NAME: str = os.getenv("SEED_ADMIN_NAME", "Platform Administrator")
+    SEED_ADMIN_EMAIL: str = os.getenv("SEED_ADMIN_EMAIL", "admin@smartliftrentals.com")
+    SEED_ADMIN_PASSWORD: str = os.getenv("SEED_ADMIN_PASSWORD", "Admin123!")
+
     CORS_ORIGINS_RAW: str = os.getenv(
         "CORS_ORIGINS",
         "http://localhost:5173,http://127.0.0.1:5173",
