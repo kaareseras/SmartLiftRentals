@@ -1,0 +1,38 @@
+[project]
+name = "smartliftrentals-backend"
+version = "0.1.0"
+description = "FastAPI backend for the SmartLiftRentals IoT platform"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic[email]",
+  "sqlalchemy",
+  "psycopg2-binary",
+  "python-dotenv",
+  "alembic",
+  "pyjwt",
+  "bcrypt",
+  "python-multipart",
+  "httpx",
+  "aiomqtt",
+  "redis[hiredis]",
+]
+
+[dependency-groups]
+dev = [
+  "pytest",
+  "pytest-asyncio",
+  "httpx",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
